@@ -1,3 +1,4 @@
+#pip install -r requirements.txts
 # -*- coding: utf-8 -*-
 import re
 import requests
@@ -963,61 +964,3 @@ if uploaded_files:
 
 else:
     st.warning("엑셀 파일을 업로드해주세요. (여러 개 업로드 가능)")
-
-###############sc############
-
-###############sc############
-import time
-from selenium import webdriver
-from PIL import Image
-import requests
-from io import BytesIO
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-
-# 웹 페이지의 스크린샷을 찍는 함수
-def take_screenshot():
-    # Selenium 웹드라이버 설정
-    options = Options()
-    options.headless = True  # 헤드리스 모드
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-    # Streamlit 웹페이지 로드
-    url = "https://skt-note.streamlit.app/"
-    driver.get(url)
-
-    # 페이지가 완전히 로드될 때까지 대기
-    time.sleep(5)
-
-    # 전체 페이지 스크린샷 찍기
-    screenshot = driver.get_screenshot_as_png()
-    driver.quit()
-
-    # 이미지 저장
-    image = Image.open(BytesIO(screenshot))
-    image.save("/tmp/screenshot.png")  # 임시 디렉토리에 저장
-    return "/tmp/screenshot.png"
-
-# 웹훅으로 스크린샷 전송하는 함수
-def send_screenshot_to_webhook(screenshot_path):
-    # 웹훅 URL
-    url = "https://soyso2sohee.app.n8n.cloud/webhook-test/mail"
-
-    # 파일을 바이너리로 읽기
-    with open(screenshot_path, "rb") as f:
-        files = {'file': ('screenshot.png', f, 'image/png')}
-        data = {'message': 'Here is the screenshot of the dashboard.'}
-
-        # 웹훅으로 POST 요청 보내기
-        response = requests.post(url, files=files, data=data)
-
-        # 응답 출력
-        print("응답 코드:", response.status_code)
-        print("응답 내용:", response.text)
-
-# Streamlit UI에서 버튼을 추가하여 스크린샷 찍기
-if st.button('스크린샷'):
-    screenshot_path = take_screenshot()
-    send_screenshot_to_webhook(screenshot_path)
-    st.success("스크린샷이 성공적으로 전송되었습니다!")
