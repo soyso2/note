@@ -3,4 +3,6 @@ pandas
 numpy
 streamlit
 altair
-
+selenium
+Pillow
+webdriver-manager
