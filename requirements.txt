@@ -1,1 +1,7 @@
+re
+requests
+pandas
+numpy
+streamlit
+altair
 
